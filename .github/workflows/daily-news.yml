@@ -1,0 +1,27 @@
+name: Daily AI News
+
+on:
+  schedule:
+    # 每天早上 8:00 (UTC+8 = UTC 0:00) 执行
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # 允许手动触发测试
+
+jobs:
+  send-news:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Run news script
+        env:
+          SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
+          SENDER_PWD: ${{ secrets.SENDER_PWD }}
+          RECEIVER_EMAIL: ${{ secrets.RECEIVER_EMAIL }}
+        run: python main.py
